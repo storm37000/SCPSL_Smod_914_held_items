@@ -3,7 +3,7 @@ using Smod2.API;
 using Smod2.Events;
 using Smod2.EventHandlers;
 
-namespace Smod.SCP914HeldItemsPlugin
+namespace SCP914HeldItemsPlugin
 {
     class EventHandler : IEventHandlerSCP914Activate
     {
