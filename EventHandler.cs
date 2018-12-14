@@ -8,9 +8,9 @@ namespace SCP914HeldItems
     class EventHandler : IEventHandlerSCP914Activate
     {
         private static readonly System.Random getrandom = new System.Random();
-        private SCP914HeldItemsPlugin plugin;
+        private Main plugin;
 
-        public EventHandler(SCP914HeldItemsPlugin plugin)
+        public EventHandler(Main plugin)
         {
             this.plugin = plugin;
         }
