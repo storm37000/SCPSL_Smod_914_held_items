@@ -1,16 +1,16 @@
-﻿using Smod2;
+using Smod2;
 using Smod2.API;
 using Smod2.Events;
 using Smod2.EventHandlers;
 
-namespace Smod.TestPlugin
+namespace SCP914HeldItems
 {
     class EventHandler : IEventHandlerSCP914Activate
     {
         private static readonly System.Random getrandom = new System.Random();
-        private Plugin plugin;
+        private SCP914HeldItemsPlugin plugin;
 
-        public EventHandler(Plugin plugin)
+        public EventHandler(SCP914HeldItemsPlugin plugin)
         {
             this.plugin = plugin;
         }
