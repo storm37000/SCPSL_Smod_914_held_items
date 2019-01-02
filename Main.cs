@@ -5,22 +5,22 @@ using Smod2.EventHandlers;
 
 namespace SCP914HeldItems
 {
-    [PluginDetails(
-        author = "storm37000",
-        name = "914 Held Items",
-        description = "SCP-914 effects held items.",
-        id = "s37k.914helditems",
-        version = "1.0.7",
-        SmodMajor = 3,
-        SmodMinor = 1,
-        SmodRevision = 0
-        )]
-    class Main : Plugin
-    {
-        public override void OnDisable()
-        {
-            this.Info(this.Details.name + " has been disabled.");
-        }
+	[PluginDetails(
+		author = "storm37000",
+		name = "914 Held Items",
+		description = "SCP-914 effects held items.",
+		id = "s37k.914helditems",
+		version = "1.0.7",
+		SmodMajor = 3,
+		SmodMinor = 1,
+		SmodRevision = 0
+		)]
+	class Main : Plugin
+	{
+		public override void OnDisable()
+		{
+			this.Info(this.Details.name + " has been disabled.");
+		}
 		public override void OnEnable()
 		{
 			this.Info(this.Details.name + " has been enabled.");
@@ -58,9 +58,9 @@ namespace SCP914HeldItems
 		}
 
 		public override void Register()
-        {
-            // Register Events
-            this.AddEventHandler(typeof(IEventHandlerSCP914Activate), new EventHandler(this), Priority.Highest);
-        }
-    }
+		{
+			// Register Events
+			this.AddEventHandler(typeof(IEventHandlerSCP914Activate), new EventHandler(this), Priority.Highest);
+		}
+	}
 }
