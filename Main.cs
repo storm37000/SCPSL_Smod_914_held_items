@@ -8,7 +8,7 @@ namespace SCP914HeldItems
 		name = "914 Held Items",
 		description = "SCP-914 effects held items.",
 		id = "s37k.914helditems",
-		version = "1.0.8",
+		version = "1.0.9",
 		SmodMajor = 3,
 		SmodMinor = 2,
 		SmodRevision = 2

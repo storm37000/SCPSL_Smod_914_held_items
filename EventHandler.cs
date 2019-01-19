@@ -1,7 +1,8 @@
-using Smod2;
 using Smod2.API;
 using Smod2.Events;
 using Smod2.EventHandlers;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace SCP914HeldItems
 {
@@ -17,9 +18,12 @@ namespace SCP914HeldItems
 
 		public void OnSCP914Activate(SCP914ActivateEvent ev)
 		{
-			KnobSetting settingID = ev.KnobSetting;
-			object[] inputs = ev.Inputs;
 			Scp914 objectOfType = UnityEngine.Object.FindObjectOfType<Scp914>();
+			if ((UnityEngine.Object)objectOfType == (UnityEngine.Object)null)
+			{
+				this.plugin.Error("Couldnt find SCP-914");
+				return;
+			}
 //            string[] strArray = new string[5] { "Very Rough", "Rough", "1 to 1", "Fine", "Very Fine" };
 //            for (byte index1 = 0; index1 < objectOfType.recipes.Length; ++index1) //item id
 //            {
@@ -32,38 +36,23 @@ namespace SCP914HeldItems
 //                    }
 //                }
 //            }
-			foreach (UnityEngine.Collider collider in inputs)
+			IEnumerable<Player> players = plugin.Server.GetPlayers().Where(p => ev.Inputs.OfType<UnityEngine.CapsuleCollider>().Select(s => s.GetComponent<CharacterClassManager>().SteamId).Any(s => p.SteamId == s));
+			foreach (Player player in players)
 			{
-				Pickup component1 = collider.GetComponent<Pickup>();
-				if ((UnityEngine.Object)component1 == (UnityEngine.Object)null)
+				if (player.TeamRole.Team != Smod2.API.Team.SCP && player.TeamRole.Team != Smod2.API.Team.NONE && player.TeamRole.Team != Smod2.API.Team.SPECTATOR)
 				{
-					NicknameSync component2 = collider.GetComponent<NicknameSync>();
-					CharacterClassManager component3 = collider.GetComponent<CharacterClassManager>();
-					PlyMovementSync component4 = collider.GetComponent<PlyMovementSync>();
-					PlayerStats component5 = collider.GetComponent<PlayerStats>();
-					if ((UnityEngine.Object)component2 != (UnityEngine.Object)null && (UnityEngine.Object)component3 != (UnityEngine.Object)null && ((UnityEngine.Object)component4 != (UnityEngine.Object)null && (UnityEngine.Object)component5 != (UnityEngine.Object)null) && (UnityEngine.Object)collider.gameObject != (UnityEngine.Object)null)
+					foreach (Smod2.API.Item item in player.GetInventory())
 					{
-						UnityEngine.GameObject gameObject = collider.gameObject;
-						ServerMod2.API.SmodPlayer player = new ServerMod2.API.SmodPlayer(gameObject);
-						if (player.TeamRole.Team != Smod2.API.Team.SCP && player.TeamRole.Team != Smod2.API.Team.NONE && player.TeamRole.Team != Smod2.API.Team.SPECTATOR)
+						sbyte outputitem = -2;
+						outputitem = (sbyte)(objectOfType.recipes[(byte)item.ItemType].outputs[(byte)ev.KnobSetting].outputs[getrandom.Next(0,objectOfType.recipes[(byte)item.ItemType].outputs[(byte)ev.KnobSetting].outputs.Count)]);
+						if (outputitem != -2)
 						{
-							if ((UnityEngine.Object)objectOfType == (UnityEngine.Object)null)
-							{
-								this.plugin.Error("Couldnt find SCP-914");
-							}
-							else
-							{
-								foreach (Smod2.API.Item item in player.GetInventory())
-								{
-									sbyte outputitem = (sbyte)(objectOfType.recipes[(byte)item.ItemType].outputs[(byte)settingID].outputs[getrandom.Next(0,objectOfType.recipes[(byte)item.ItemType].outputs[(byte)settingID].outputs.Count)]);
-									item.Remove();
-									this.plugin.Debug(item.ItemType + " ==> " + (ItemType)outputitem);
-									if (outputitem >= 0)
-									{
-										player.GiveItem((ItemType)outputitem);
-									}
-								}
-							}
+							item.Remove();
+							this.plugin.Debug(item.ItemType + " ==> " + (ItemType)outputitem);
+						}
+						if (outputitem >= 0)
+						{
+							player.GiveItem((ItemType)outputitem);
 						}
 					}
 				}
