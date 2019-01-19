@@ -44,7 +44,14 @@ namespace SCP914HeldItems
 					foreach (Smod2.API.Item item in player.GetInventory())
 					{
 						sbyte outputitem = -2;
-						outputitem = (sbyte)(objectOfType.recipes[(byte)item.ItemType].outputs[(byte)ev.KnobSetting].outputs[getrandom.Next(0,objectOfType.recipes[(byte)item.ItemType].outputs[(byte)ev.KnobSetting].outputs.Count)]);
+						try
+						{
+							outputitem = (sbyte)(objectOfType.recipes[(byte)item.ItemType].outputs[(byte)ev.KnobSetting].outputs[getrandom.Next(0, objectOfType.recipes[(byte)item.ItemType].outputs[(byte)ev.KnobSetting].outputs.Count)]);
+						}
+						catch (System.Exception)
+						{
+							this.plugin.Error("Recipe for " + item.ItemType + "does not exist!  Ask the game devs to add a recipe for it!");
+						}
 						if (outputitem != -2)
 						{
 							item.Remove();
