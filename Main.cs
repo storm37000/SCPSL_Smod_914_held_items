@@ -59,6 +59,9 @@ namespace SCP914HeldItems
 		{
 			// Register Events
 			this.AddEventHandlers(new EventHandler(this));
+
+			this.AddConfig(new Smod2.Config.ConfigSetting("914helditems_enable", true, Smod2.Config.SettingType.BOOL, true, ""));
+			this.AddConfig(new Smod2.Config.ConfigSetting("914helditems_currentonly", false, Smod2.Config.SettingType.BOOL, true, ""));
 		}
 	}
 }
