@@ -18,6 +18,11 @@ namespace SCP914HeldItems
 
 		public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
 		{
+			if (!plugin.UpToDate)
+			{
+				plugin.outdatedmsg();
+			}
+
 			enabled = plugin.GetConfigBool("914helditems_enable");
 			currentonly = plugin.GetConfigBool("914helditems_currentonly");
 		}
@@ -86,7 +91,10 @@ namespace SCP914HeldItems
 			}
 			catch (System.Exception)
 			{
-				this.plugin.Error("Recipe for " + item.ItemType + "does not exist!  Ask the game devs to add a recipe for it!");
+				if(outputitem >= 0)
+				{
+					this.plugin.Error("Recipe for " + item.ItemType + "does not exist!  Ask the game devs to add a recipe for it!");
+				}
 			}
 			if (outputitem != -2)
 			{

@@ -1,5 +1,9 @@
 using Smod2;
 using Smod2.Attributes;
+using System.Collections.Generic;
+using UnityEngine.Networking;
+using MEC;
+using System.Linq;
 
 namespace SCP914HeldItems
 {
@@ -8,7 +12,7 @@ namespace SCP914HeldItems
 		name = "914 Held Items",
 		description = "SCP-914 effects held items.",
 		id = "s37k.914helditems",
-		version = "1.0.9",
+		version = "1.0.10",
 		SmodMajor = 3,
 		SmodMinor = 2,
 		SmodRevision = 2
@@ -22,27 +26,37 @@ namespace SCP914HeldItems
 		public override void OnEnable()
 		{
 			this.Info(this.Details.name + " has been enabled.");
+		}
+
+		public bool UpToDate { get; private set; } = true;
+
+		public void outdatedmsg()
+		{
+			this.Error("Your version is out of date, please update the plugin and restart your server when it is convenient for you.");
+		}
+
+		IEnumerator<float> UpdateChecker()
+		{
 			string[] hosts = { "https://storm37k.com/addons/", "http://74.91.115.126/addons/" };
-			ushort version = ushort.Parse(this.Details.version.Replace(".", string.Empty));
 			bool fail = true;
 			string errorMSG = "";
 			foreach (string host in hosts)
 			{
-				using (UnityEngine.WWW req = new UnityEngine.WWW(host + this.Details.name + ".ver"))
+				using (UnityWebRequest webRequest = UnityWebRequest.Get(host + this.Details.name + ".ver"))
 				{
-					while (!req.isDone) { }
-					errorMSG = req.error;
-					if (string.IsNullOrEmpty(req.error))
+					// Request and wait for the desired page.
+					yield return Timing.WaitUntilDone(webRequest.SendWebRequest());
+
+					if (webRequest.isNetworkError || webRequest.isHttpError)
 					{
-						ushort fileContentV = 0;
-						if (!ushort.TryParse(req.text, out fileContentV))
+						errorMSG = webRequest.error;
+					}
+					else
+					{
+						if (webRequest.downloadHandler.text != this.Details.version)
 						{
-							errorMSG = "Parse Failure";
-							continue;
-						}
-						if (fileContentV > version)
-						{
-							this.Error("Your version is out of date, please visit the Smod discord and download the newest version");
+							outdatedmsg();
+							UpToDate = false;
 						}
 						fail = false;
 						break;
@@ -62,6 +76,22 @@ namespace SCP914HeldItems
 
 			this.AddConfig(new Smod2.Config.ConfigSetting("914helditems_enable", true, Smod2.Config.SettingType.BOOL, true, ""));
 			this.AddConfig(new Smod2.Config.ConfigSetting("914helditems_currentonly", false, Smod2.Config.SettingType.BOOL, true, ""));
+
+			string confdir = Smod2.ConfigManager.Manager.Config.GetConfigPath();
+			int index = confdir.LastIndexOf("/");
+			if (index > 0)
+			{
+				confdir = confdir.Substring(0, index); // or index + 1 to keep slash
+			}
+			string file = System.IO.Directory.GetFiles(confdir, "s37k_g_disableVcheck*", System.IO.SearchOption.TopDirectoryOnly).FirstOrDefault();
+			if (file == null)
+			{
+				Timing.RunCoroutine(UpdateChecker());
+			}
+			else
+			{
+				this.Info("Version checker is disabled.");
+			}
 		}
 	}
 }
