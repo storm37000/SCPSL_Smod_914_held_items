@@ -77,20 +77,21 @@ namespace SCP914HeldItems
 			this.AddConfig(new Smod2.Config.ConfigSetting("914helditems_enable", true, Smod2.Config.SettingType.BOOL, true, ""));
 			this.AddConfig(new Smod2.Config.ConfigSetting("914helditems_currentonly", false, Smod2.Config.SettingType.BOOL, true, ""));
 
-			string confdir = Smod2.ConfigManager.Manager.Config.GetConfigPath();
-			int index = confdir.LastIndexOf("/");
-			if (index > 0)
+			try
 			{
-				confdir = confdir.Substring(0, index); // or index + 1 to keep slash
+				string file = System.IO.Directory.GetFiles(System.IO.Path.GetDirectoryName(Smod2.ConfigManager.Manager.Config.GetConfigPath()), "s37k_g_disableVcheck*", System.IO.SearchOption.TopDirectoryOnly).FirstOrDefault();
+				if (file == null)
+				{
+					Timing.RunCoroutine(UpdateChecker());
+				}
+				else
+				{
+					this.Info("Version checker is disabled.");
+				}
 			}
-			string file = System.IO.Directory.GetFiles(confdir, "s37k_g_disableVcheck*", System.IO.SearchOption.TopDirectoryOnly).FirstOrDefault();
-			if (file == null)
+			catch (System.Exception)
 			{
 				Timing.RunCoroutine(UpdateChecker());
-			}
-			else
-			{
-				this.Info("Version checker is disabled.");
 			}
 		}
 	}
